@@ -47,3 +47,5 @@ export default async function Employees({ searchParams }) {
     </>
   );
 }
+
+export const dynamic = 'force-dynamic';

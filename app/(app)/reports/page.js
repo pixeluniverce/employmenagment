@@ -40,3 +40,5 @@ export default async function Reports({ searchParams }) {
     </>
   );
 }
+
+export const dynamic = 'force-dynamic';

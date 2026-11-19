@@ -11,3 +11,5 @@ export default function Login({ searchParams }) {
     </div>
   );
 }
+
+export const dynamic = 'force-dynamic';

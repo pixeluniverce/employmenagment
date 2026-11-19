@@ -4,3 +4,5 @@ export async function GET() {
   const csv = 'Code,Name,Unit,Rate,Active\n' + r.map((x) => [x.code, `"${x.name.replace(/"/g, '""')}"`, x.unit, x.rate, x.active].join(',')).join('\n');
   return new Response(csv, { headers: { 'Content-Type': 'text/csv', 'Content-Disposition': 'attachment; filename=items.csv' } });
 }
+
+export const dynamic = 'force-dynamic';

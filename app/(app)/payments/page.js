@@ -9,3 +9,5 @@ export default async function Payments({ searchParams }) {
   ]);
   return <Txn title="Payments" rows={rows} employees={employees} add={addPayment} del={deletePayment} emp={e} receipt />;
 }
+
+export const dynamic = 'force-dynamic';

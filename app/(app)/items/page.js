@@ -64,3 +64,5 @@ export default async function Items({ searchParams }) {
     </>
   );
 }
+
+export const dynamic = 'force-dynamic';

@@ -11,7 +11,7 @@ const s = (f, k) => String(f.get(k) ?? '').trim();
 const n = (f, k) => Number(f.get(k) || 0);
 
 export async function login(f) {
-  if (s(f, 'password') === process.env.ADMIN_PASSWORD) {
+  if (process.env.ADMIN_PASSWORD && process.env.SESSION_SECRET && s(f, 'password') === process.env.ADMIN_PASSWORD) {
     cookies().set('sess', token(), { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', maxAge: 2592000, path: '/' });
     redirect('/');
   }

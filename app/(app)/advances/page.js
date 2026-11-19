@@ -9,3 +9,5 @@ export default async function Advances({ searchParams }) {
   ]);
   return <Txn title="Advances" rows={rows} employees={employees} add={addAdvance} del={deleteAdvance} emp={e} />;
 }
+
+export const dynamic = 'force-dynamic';

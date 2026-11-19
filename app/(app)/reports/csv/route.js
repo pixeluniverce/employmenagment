@@ -15,3 +15,5 @@ export async function GET(req) {
   const csv = 'Employee ID,Name,Earned,Advances,Paid,Closing Balance\n' + rows.map((r) => [r.code, `"${r.name.replace(/"/g, '""')}"`, r.earned, r.adv, r.paid, b[r.id]].join(',')).join('\n');
   return new Response(csv, { headers: { 'Content-Type': 'text/csv', 'Content-Disposition': `attachment; filename=report-${m}.csv` } });
 }
+
+export const dynamic = 'force-dynamic';

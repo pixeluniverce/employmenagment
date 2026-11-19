@@ -75,3 +75,5 @@ export default async function Profile({ params, searchParams }) {
     </>
   );
 }
+
+export const dynamic = 'force-dynamic';
