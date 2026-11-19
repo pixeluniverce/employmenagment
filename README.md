@@ -4,7 +4,8 @@ Group-wise production and piece-rate earnings. Next.js 14 + Neon Postgres + Verc
 ## Deploy (no local run needed)
 1. Neon: create a project, click Connect, turn pooling ON, copy the connection string.
 2. Neon > SQL Editor: paste all of `schema.sql` and Run.
-   (If you ran the OLD production-pro schema in the same database, run `drop_old.sql` first, or create a new Neon database.)
+   (If you ever ran the OLD production-pro schema in the same database, first run `reset_all.sql` (deletes everything), then `schema.sql`. Or use a brand-new Neon database.)
+   After deploying, open `/status` on your site: it shows which variables, tables or columns are wrong.
 3. Upload this folder's contents to a GitHub repo, import it in Vercel.
 4. Environment variables: `DATABASE_URL`, `ADMIN_PASSWORD`, `SESSION_SECRET` (see `.env.example`). Deploy.
 

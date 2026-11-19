@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { logout } from '@/app/actions';
-const links = [['/', 'Dashboard'], ['/employees', 'Employees'], ['/groups', 'Employee Groups'], ['/assign', 'Daily Groups & Attendance'], ['/items', 'Items & Rates'], ['/work', 'Daily Production'], ['/distribution', 'Earnings Distribution'], ['/advances', 'Advances'], ['/payments', 'Payments'], ['/reports', 'Reports & Settlement'], ['/settings', 'Settings']];
+const links = [['/', 'Dashboard'], ['/employees', 'Employees'], ['/groups', 'Employee Groups'], ['/assign', 'Daily Groups & Attendance'], ['/items', 'Items & Rates'], ['/work', 'Daily Production'], ['/distribution', 'Earnings Distribution'], ['/advances', 'Advances'], ['/payments', 'Payments'], ['/reports', 'Reports & Settlement'], ['/settings', 'Settings'], ['/status', 'System status']];
 export default function Nav() {
   return (
     <aside className="no-print bg-navy text-slate-200 md:fixed md:inset-y-0 md:w-60 md:overflow-y-auto">
