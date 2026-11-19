@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import { splitPool, toPaise, fromPaise } from '../lib/split.mjs';
+const run = (pool, ws) => { const r = splitPool(toPaise(pool), ws.map((weight, i) => ({ id: i + 1, weight }))); return { shares: r.rows.map((x) => fromPaise(x.paise)), und: fromPaise(r.undistributed), sum: r.rows.reduce((s, x) => s + x.paise, 0) }; };
+let t = (name, fn) => { fn(); console.log('PASS', name); };
+t('1 equal: 600 / 3', () => assert.deepEqual(run(600, [1, 1, 1]).shares, ['200.00', '200.00', '200.00']));
+t('2 groups independent: 900 / 3', () => assert.deepEqual(run(900, [1, 1, 1]).shares, ['300.00', '300.00', '300.00']));
+t('3 only one working: 500', () => assert.deepEqual(run(500, [1, 0, 0, 0, 0, 0]).shares, ['500.00', '0.00', '0.00', '0.00', '0.00', '0.00']));
+t('4 half day: 1000 (1,1,.5,0)', () => assert.deepEqual(run(1000, [1, 1, 0.5, 0]).shares, ['400.00', '400.00', '200.00', '0.00']));
+t('5 all absent: no divide by zero', () => { const r = run(750, [0, 0, 0]); assert.deepEqual(r.shares, ['0.00', '0.00', '0.00']); assert.equal(r.und, '750.00'); });
+t('10 rounding: 100 / 3', () => { const r = run(100, [1, 1, 1]); assert.deepEqual(r.shares, ['33.33', '33.33', '33.34']); assert.equal(r.sum, 10000); });
+t('rounding keeps exact total (many cases)', () => { for (const [p, ws] of [[0.01, [1, 1, 1]], [999.99, [1, 0.5, 1, 1]], [12345.67, [1, 1, 1, 1, 1, 0.5, 1]], [1, [1, 1, 1]]]) assert.equal(run(p, ws).sum, toPaise(p)); });
+t('9 balance: 1000 + 5000 - 1000 - 3000 = 2000', () => assert.equal(toPaise(1000) + toPaise(5000) - toPaise(1000) - toPaise(3000), toPaise(2000)));
+console.log('All engine tests passed');

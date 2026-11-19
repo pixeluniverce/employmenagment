@@ -1,5 +1,5 @@
 {
-  "name": "Mahadev Cement Product Employee Managment System",
+  "name": "mahadev-cement-ems",
   "version": "1.0.0",
   "private": true,
   "engines": { "node": ">=20" },
@@ -7,6 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "test": "node scripts/test-engine.mjs",
     "db:migrate": "node --env-file=.env.local scripts/migrate.mjs"
   },
   "dependencies": {

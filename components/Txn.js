@@ -4,11 +4,12 @@ import { Head } from '@/components/ui';
 import Del from '@/components/Del';
 import PrintBtn from '@/components/PrintBtn';
 
-export default function Txn({ title, rows, employees, add, del, emp, receipt }) {
+export default function Txn({ title, rows, employees, add, del, emp, receipt, err, overpay }) {
   const total = rows.reduce((s, r) => s + +r.amount, 0);
   return (
     <>
       <Head t={title}><PrintBtn /></Head>
+      {err && <p className="mb-3 rounded border border-red-300 bg-red-50 p-3 text-sm text-red-700">{err}</p>}
       <form action={add} className="card no-print mb-4 grid gap-3 md:grid-cols-3">
         <div><label className="lbl">Employee</label><select name="employee_id" required defaultValue="" className="inp"><option value="" disabled>Select employee</option>{employees.map((e) => (<option key={e.id} value={e.id}>{e.name} ({e.code})</option>))}</select></div>
         <div><label className="lbl">Date</label><input type="date" name="date" defaultValue={today()} required className="inp" /></div>
@@ -16,6 +17,7 @@ export default function Txn({ title, rows, employees, add, del, emp, receipt }) 
         <div><label className="lbl">Method</label><select name="method" className="inp"><option>Cash</option><option>UPI</option><option>Bank</option></select></div>
         <div><label className="lbl">Reference number</label><input name="reference" className="inp" /></div>
         <div><label className="lbl">Notes</label><input name="notes" className="inp" /></div>
+        {overpay && <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="allow_over" /> Allow overpayment</label>}
         <div><button className="btn">Save {title.toLowerCase().replace(/s$/, '')}</button></div>
       </form>
       <form className="no-print mb-3 flex gap-2">

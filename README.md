@@ -1,21 +1,27 @@
-# Production Pro: piece-rate payroll (Next.js + Neon + Vercel)
+# Mahadev Cement Product Employee Management System
+Group-wise production and piece-rate earnings. Next.js 14 + Neon Postgres + Vercel.
 
-## 1. Create the free database
-1. Sign up at https://neon.tech (free plan), create a project.
-2. Click **Connect**, copy the **pooled** connection string.
+## Deploy (no local run needed)
+1. Neon: create a project, click Connect, turn pooling ON, copy the connection string.
+2. Neon > SQL Editor: paste all of `schema.sql` and Run.
+   (If you ran the OLD production-pro schema in the same database, run `drop_old.sql` first, or create a new Neon database.)
+3. Upload this folder's contents to a GitHub repo, import it in Vercel.
+4. Environment variables: `DATABASE_URL`, `ADMIN_PASSWORD`, `SESSION_SECRET` (see `.env.example`). Deploy.
 
-## 2. Run locally (optional)
-```
-cp .env.example .env.local     # fill DATABASE_URL, ADMIN_PASSWORD, SESSION_SECRET
-npm install
-npm run db:migrate             # creates all tables in Neon
-npm run dev                    # http://localhost:3000
-```
+## Daily workflow
+1. Daily Groups & Attendance: pick date, create groups (or copy yesterday), assign employees, set attendance.
+2. Daily Production: pick group, enter items and quantities, Save (several batches allowed).
+3. Earnings Distribution: review, then Finalize. Earnings are saved to employee accounts and the group locks.
+4. Advances / Payments: record money; balances update automatically.
+5. Reports & Settlement: monthly statement, group-wise, item-wise, attendance.
 
-## 3. Deploy on Vercel
-1. Push this folder to a GitHub repo, then Vercel > Add New Project > import it.
-2. Add Environment Variables: `DATABASE_URL`, `ADMIN_PASSWORD`, `SESSION_SECRET`.
-3. Deploy. Run `npm run db:migrate` once from your computer (with the same DATABASE_URL in `.env.local`) to create the tables.
+## Rules implemented
+- Each group is its own pool: share = pool x weight / total eligible weights (Present 1, Half Day 0.5, Absent/Leave 0; editable in Settings).
+- Never divides by registered employee count. One worker present gets the whole pool. Nobody eligible: pool stays undistributed with a warning, no divide by zero.
+- Money is NUMERIC in the database and integer paise in code; the rounding remainder goes to the last eligible employees, so shares always add up exactly (100 / 3 = 33.33 + 33.33 + 33.34).
+- One employee can be in only one group per date (database unique constraint).
+- Rates are frozen into each production line. Finalized groups are locked; "Reopen" is an admin correction recorded in the audit log.
+- Balance = opening balance + finalized earnings - advances - payments (computed, never overwritten).
 
-## How balances work
-Balance = opening balance + production earnings - advances - payments, always computed from transaction rows (nothing is overwritten). Each production line stores the rate used at save time, so later rate changes never alter old earnings.
+## Test the money logic
+`npm test` runs the distribution engine tests (equal split, separate groups, one worker, half day, all absent, rounding, balance).

@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { saveWork } from '@/app/actions';
 
-export default function WorkForm({ employees, items, today }) {
+export default function WorkForm({ groups, items }) {
   const [rows, setRows] = useState([{ q: '', qty: '' }]);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState(null);
@@ -10,7 +10,6 @@ export default function WorkForm({ employees, items, today }) {
   const upd = (k, p) => setRows((r) => r.map((x, i) => (i === k ? { ...x, ...p } : x)));
   const lines = rows.map((r) => { const it = find(r.q), qty = +r.qty || 0; return { it, qty, amt: it ? Math.round(qty * it.rate * 100) / 100 : 0 }; });
   const total = lines.reduce((s, l) => s + l.amt, 0);
-  const pcs = lines.reduce((s, l) => s + (l.it ? l.qty : 0), 0);
   async function submit(e) {
     e.preventDefault();
     if (busy) return;
@@ -23,13 +22,14 @@ export default function WorkForm({ employees, items, today }) {
     setBusy(false); setMsg(r);
     if (r.ok) setRows([{ q: '', qty: '' }]);
   }
+  if (!groups.length) return <div className="card text-sm text-slate-600">No open groups for this date. Create groups on the <b>Daily Groups &amp; Attendance</b> page first (finalized groups cannot take more production).</div>;
   return (
     <form onSubmit={submit} className="card space-y-4">
       <div className="grid gap-3 md:grid-cols-2">
-        <div><label className="lbl">Employee</label>
-          <select name="employee_id" required className="inp" defaultValue=""><option value="" disabled>Select employee</option>
-            {employees.map((e) => (<option key={e.id} value={e.id}>{e.name} ({e.code})</option>))}</select></div>
-        <div><label className="lbl">Work date</label><input type="date" name="work_date" defaultValue={today} required className="inp" /></div>
+        <div><label className="lbl">Working group</label>
+          <select name="daily_group_id" required className="inp" defaultValue={groups.length === 1 ? groups[0].id : ''}><option value="" disabled>Select group</option>
+            {groups.map((g) => (<option key={g.id} value={g.id}>{g.name} ({g.working} working of {g.total}){+g.working === 0 ? ' - no eligible employee!' : ''}</option>))}</select></div>
+        <div><label className="lbl">Notes (optional)</label><input name="notes" className="inp" /></div>
       </div>
       <datalist id="items">{items.map((i) => (<option key={i.id} value={`${i.code} – ${i.name}`} />))}</datalist>
       <div className="overflow-x-auto">
@@ -47,15 +47,15 @@ export default function WorkForm({ employees, items, today }) {
               </tr>
             ))}
           </tbody>
-          <tfoot><tr className="font-semibold"><td>Total</td><td>{pcs}</td><td /><td>₹{total.toLocaleString('en-IN')}</td><td /></tr></tfoot>
+          <tfoot><tr className="font-semibold"><td>Total group production</td><td /><td /><td>₹{total.toLocaleString('en-IN')}</td><td /></tr></tfoot>
         </table>
       </div>
       <div className="flex flex-wrap items-center gap-3">
         <button type="button" className="btn-o" onClick={() => setRows((x) => [...x, { q: '', qty: '' }])}>Add item row</button>
-        <button className="btn" disabled={busy}>{busy ? 'Saving…' : 'Save daily work'}</button>
+        <button className="btn" disabled={busy}>{busy ? 'Saving…' : 'Save production'}</button>
         {msg && <span className={msg.ok ? 'text-green-700' : 'text-red-600'}>{msg.msg}</span>}
       </div>
-      <p className="text-xs text-slate-500">Press Enter in a quantity box to add the next row. Rates are looked up and frozen on the server when you save.</p>
+      <p className="text-xs text-slate-500">Press Enter in a quantity box to add the next row. You can save several batches for the same group and date; they all join that group's pool. Rates are looked up and frozen on the server.</p>
     </form>
   );
 }
