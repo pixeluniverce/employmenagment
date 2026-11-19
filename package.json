@@ -1,5 +1,5 @@
 {
-  "name": "production-pro",
+  "name": "Mahadev Cement Product Employee Managment System",
   "version": "1.0.0",
   "private": true,
   "engines": { "node": ">=20" },
